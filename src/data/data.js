@@ -1,5 +1,4 @@
-const data = {
-
+export const data = {
     classic:
         [{
             name: "La Traviata (2LP), 1983 ",

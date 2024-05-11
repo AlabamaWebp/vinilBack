@@ -5,5 +5,5 @@ export class ProductClass extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
-  name: number;
+  name: string;
 }

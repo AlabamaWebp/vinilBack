@@ -5,6 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/user.entity';
 import { Product, ProductClass } from './product/product.entity';
 import { UserProduct } from './order/UserProduct.entity';
+import { ProductClassService } from './product/productClass.service';
+import { ProductService } from './product/product.service';
+import { userProductService } from './order/userProduct.service';
 
 @Module({
   imports: [
@@ -12,18 +15,18 @@ import { UserProduct } from './order/UserProduct.entity';
       {
         type: "sqlite",
         database: "database.sqlite",
-        entities: [User, Product, ProductClass, UserProduct],
+        entities: [User, ProductClass, Product, UserProduct],
         synchronize: true,
         dropSchema: true
         // "entities": [
         //     "src/**/*.entity.ts"
         // ],
-    }
+      }
     ),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, ProductClass, Product, UserProduct]),
     DatabaseModule,
   ],
   controllers: [DatabaseController],
-  providers: [UserService]
+  providers: [UserService, ProductClassService, ProductService, userProductService]
 })
 export class DatabaseModule {}

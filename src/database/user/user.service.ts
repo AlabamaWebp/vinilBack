@@ -10,6 +10,17 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  onModuleInit() {
+    this.userRepository.save({
+      "login": "1",
+      "password": "1",
+      "fio": "1",
+      "tel": "1",
+      "country": "1",
+      "city": "1"
+    })
+  }
+
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
