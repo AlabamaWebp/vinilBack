@@ -8,6 +8,7 @@ import { UserProduct } from './order/UserProduct.entity';
 import { ProductClassService } from './product/productClass.service';
 import { ProductService } from './product/product.service';
 import { userProductService } from './order/userProduct.service';
+import { DatabaseService } from './database.service';
 
 @Module({
   imports: [
@@ -16,17 +17,14 @@ import { userProductService } from './order/userProduct.service';
         type: "sqlite",
         database: "database.sqlite",
         entities: [User, ProductClass, Product, UserProduct],
-        synchronize: true,
-        dropSchema: true
-        // "entities": [
-        //     "src/**/*.entity.ts"
-        // ],
+        synchronize: process.env.create_table === '1',
+        dropSchema: process.env.create_table === '1',
       }
     ),
     TypeOrmModule.forFeature([User, ProductClass, Product, UserProduct]),
     DatabaseModule,
   ],
   controllers: [DatabaseController],
-  providers: [UserService, ProductClassService, ProductService, userProductService]
+  providers: [UserService, ProductClassService, ProductService, userProductService, DatabaseService]
 })
 export class DatabaseModule {}

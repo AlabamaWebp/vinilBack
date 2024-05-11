@@ -19,14 +19,14 @@ export class ProductClassService {
     return this.userRepository.save(user);
   }
 
-  onModuleInit() {
-    const classes = [
-      "Классика",
-      "Джаз",
-      "Блюз",
-      "Рок",
-      "Поп",
-    ]
-    classes.forEach(el => this.create({name: el} as any))
-  }
+  // onModuleInit() {
+  //   const classes = [
+  //     "Классика",
+  //     "Джаз",
+  //     "Блюз",
+  //     "Рок",
+  //     "Поп",
+  //   ]
+  //   classes.forEach(el => this.create({name: el} as any))
+  // }
 }
