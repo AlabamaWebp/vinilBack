@@ -17,8 +17,8 @@ import { DatabaseService } from './database.service';
         type: "sqlite",
         database: "database.sqlite",
         entities: [User, ProductClass, Product, UserProduct],
-        synchronize: process.env.create_table === '1',
-        dropSchema: process.env.create_table === '1',
+        synchronize: false,
+        dropSchema: false,
       }
     ),
     TypeOrmModule.forFeature([User, ProductClass, Product, UserProduct]),
