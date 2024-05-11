@@ -19,6 +19,11 @@ export class ProductService {
     return this.userRepository.save(user);
   }
 
+  async find(id: number): Promise<Product> {
+    return await this.userRepository.findOneBy({ id: id })
+    .then(el => el)
+  }
+
 
   // onModuleInit() {
   //   const d = data;
