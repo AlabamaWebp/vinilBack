@@ -8,10 +8,10 @@ export class ProductClassService {
   constructor(
     @InjectRepository(ProductClass)
     private readonly userRepository: Repository<ProductClass>,
-  ) {}
+  ) { }
 
-  async findAll(): Promise<ProductClass[]> {
-    return this.userRepository.find();
+  async findAll(name: string): Promise<ProductClass> {
+    return this.userRepository.findOne({ where: { name: name } });
   }
 
   async create(user: ProductClass): Promise<ProductClass>  //Promise<User> 

@@ -84,7 +84,7 @@ export class DatabaseService {
 // function getRandomInt() {
 //       return Math.floor(Math.random() * 20) + 10;
 // }
-const imena = {
+export const imena = {
       classic: "Классика",
       djaz: "Джаз",
       bluz: "Блюз",

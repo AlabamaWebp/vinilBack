@@ -8,11 +8,13 @@ export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly userRepository: Repository<Product>,
-
+    @InjectRepository(ProductClass)
+    private readonly productClassRepository: Repository<ProductClass>,
   ) { }
 
-  async findAll(): Promise<Product[]> {
-    return this.userRepository.find({ relations: ['images', 'className'] });
+  async findAll(sort: string): Promise<Product[]> {
+    const productClass = await this.productClassRepository.findOne({ where: { name: sort } });
+    return this.userRepository.find({ where: { className: productClass }, relations: ['images', 'className'] });
   }
   async create(user: Product): Promise<Product>  //Promise<User> 
   {

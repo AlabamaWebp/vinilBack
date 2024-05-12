@@ -18,13 +18,13 @@ export class DatabaseController {
   ) { }
 
 
-  @Get('products/:login')
-  async products(@Param('login') login: string): Promise<any[]> {
-    const data = await this.product.findAll();
-    return data
+  @Get('products/:login/:sort')
+  async products(@Param('login') login: string, @Param('sort') sort: string): Promise<any[]> {
+    const data = await this.product.findAll(sort);
+    return data;
     // return data.map(elem => productsImg(elem, this.productImg));
   }
-  @Get('products/:login/:id')
+  @Get('product/:login/:id')
   async productsId(@Param('login') login: string, @Param('id') id: number): Promise<any> {
     return await this.product.findOne(id)
     // .then(async el => {
