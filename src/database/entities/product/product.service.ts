@@ -12,16 +12,14 @@ export class ProductService {
   ) { }
 
   async findAll(): Promise<Product[]> {
-    return this.userRepository.find({ relations: ['images'] });
+    return this.userRepository.find({ relations: ['images', 'className'] });
   }
-
   async create(user: Product): Promise<Product>  //Promise<User> 
   {
     return this.userRepository.save(user);
   }
-
   async findOne(id: number): Promise<Product> {
-    return await this.userRepository.findOne({ where: { id: id }, relations: ['images', 'className'] })
+    return await this.userRepository.findOne({ where: { id: id }, relations: ['images', 'className']})
   }
 }
 
