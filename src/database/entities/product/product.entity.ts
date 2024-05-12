@@ -1,11 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
 import { ProductClass } from '../productClass/productClass.entity';
+
+
 
 @Entity('Product')
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => ProductClass, {eager: true})
+  @ManyToOne(() => ProductClass, { eager: true })
   className: ProductClass | string;
   @Column()
   name: string;
@@ -14,9 +16,19 @@ export class Product extends BaseEntity {
   @Column()
   hover: string;
   @Column()
-  full: string; 
-  // @Column()
-  // count: number; 
+  full: string;
+  @OneToMany(() => ProductImg, productImage => productImage.product, { cascade: true })
+  images: ProductImg[];
 }
 export { ProductClass };
 
+
+@Entity('ProductImg')
+export class ProductImg extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+  @ManyToOne(() => Product, product => product.images) // {eager: true}
+  product: Product;
+  @Column()
+  img: string;
+}

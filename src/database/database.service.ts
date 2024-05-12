@@ -1,67 +1,138 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from './entities/user/user.service';
-import { ProductService } from './entities/product/product.service';
+import { ProductImgService, ProductService } from './entities/product/product.service';
 import { ProductClassService } from './entities/productClass/productClass.service';
 
 @Injectable()
 export class DatabaseService {
-    constructor(private user: UserService, private products: ProductService, private productsClass: ProductClassService) { }
-    recreate = process.env.create_table === '1'; // process.env.create_table === '1'
-    onModuleInit() {
-        console.log(process.env.create_table);
-        
-        if (this.recreate) {
-            this.createUser();
-            this.createClassProducts();
-            setTimeout(() => {
-                  this.createProducts();
-            }, 1000);
-        }
-    }
-    createUser() {
-        this.user.create({
-            "login": "1",
-            "password": "1",
-            "fio": "1",
-            "tel": "1",
-            "country": "1",
-            "city": "1"
-        } as any)
-    }
-    createClassProducts() {
-        const classes = [
-            "Классика",
-            "Джаз",
-            "Блюз",
-            "Рок",
-            "Поп",
-          ]
-          classes.forEach(el => this.productsClass.create({name: el} as any))
-    }
-    createProducts() {
-        const d = data;
-        const class_id = Object.keys(data);
-        class_id.forEach((el, i) => {
-            d[el].forEach((el2) => {
-                const tmp = el2;
-                tmp['className'] = i + 1; // el
-            //     tmp['count'] = getRandomInt();
-                this.products.create(tmp);
+      constructor(
+            private user: UserService,
+            private products: ProductService,
+            private productsClass: ProductClassService,
+            private productImg: ProductImgService
+      ) { }
+      recreate = process.env.create_table === '1'; // process.env.create_table === '1'
+      async onModuleInit() {
+            console.log(process.env.create_table);
+
+            if (this.recreate) {
+                  await this.createUser();
+                  await this.createClassProducts();
+                  await this.createProducts();
+            }
+      }
+      async createUser() {
+            await this.user.create({
+                  "login": "1",
+                  "password": "1",
+                  "fio": "1",
+                  "tel": "1",
+                  "country": "1",
+                  "city": "1"
+            } as any)
+      }
+      async createClassProducts() {
+            const classes = [
+                  "Классика",
+                  "Джаз",
+                  "Блюз",
+                  "Рок",
+                  "Поп",
+            ]
+            for (const el of classes) 
+                  await this.productsClass.create({ name: el } as any)
+            
+      }
+      async createProducts() {
+            const class_id = Object.keys(data);
+
+            class_id.forEach((className, i1) => {
+                  data[className].forEach((el2, j1) => {
+                        const i = i1 + 1;
+                        const j = j1;
+                        el2['className'] = i; // el
+                        this.products.create(el2)
+                              .then(() => {
+                                    const tmp1 = imena[className];
+                                    for (let ind = 1; ind <= imgs[`${tmp1}_${j}`]; ind++) {
+                                          const img = `${tmp1}_${j}_${ind}`;
+                                          if (img && el2) {
+                                                this.productImg.create({ img: img, product: el2 } as any);
+                                          }
+                                    }
+                              });
+                  })
             })
-        })
-    }
+      }
 }
-
-function getRandomInt() {
-    return Math.floor(Math.random() * 20) + 10;
+// function getRandomInt() {
+//       return Math.floor(Math.random() * 20) + 10;
+// }
+const imena = {
+      classic: "Классика",
+      djaz: "Джаз",
+      bluz: "Блюз",
+      rok: "Рок",
+      pop: "Поп",
 }
-
+const imgs = {
+      "Блюз_1": 3,
+      "Блюз_2": 2,
+      "Блюз_3": 2,
+      "Блюз_4": 2,
+      "Блюз_5": 2,
+      "Блюз_6": 3,
+      "Блюз_7": 2,
+      "Блюз_8": 2,
+      "Блюз_9": 2,
+      "Блюз_10": 3,
+      "Джаз_1": 2,
+      "Джаз_2": 2,
+      "Джаз_3": 2,
+      "Джаз_4": 2,
+      "Джаз_5": 3,
+      "Джаз_6": 2,
+      "Джаз_7": 2,
+      "Джаз_8": 2,
+      "Джаз_9": 2,
+      "Джаз_10": 3,
+      "Классика_1": 3,
+      "Классика_2": 2,
+      "Классика_3": 2,
+      "Классика_4": 1,
+      "Классика_5": 2,
+      "Классика_6": 2,
+      "Классика_7": 2,
+      "Классика_8": 2,
+      "Классика_9": 2,
+      "Классика_10": 2,
+      "Поп_1": 2,
+      "Поп_2": 2,
+      "Поп_3": 2,
+      "Поп_4": 2,
+      "Поп_5": 2,
+      "Поп_6": 3,
+      "Поп_7": 3,
+      "Поп_8": 2,
+      "Поп_9": 3,
+      "Поп_10": 2,
+      "Рок_1": 2,
+      "Рок_2": 2,
+      "Рок_3": 3,
+      "Рок_4": 3,
+      "Рок_5": 3,
+      "Рок_6": 3,
+      "Рок_7": 3,
+      "Рок_8": 3,
+      "Рок_9": 3,
+      "Рок_10": 2
+}
 const data = {
-    classic:
-        [{
-            name: "La Traviata (2LP), 1983 ",
-            price: 1300,
-            hover: ` 
+      classic:
+            [{
+                  name: "La Traviata (2LP), 1983 ",
+                  price: 1300,
+                  hover: ` 
   Исполнитель: Giuseppe Verdi - James Levine, The Metropolitan Opera Orchestra And Metropolitan Opera Chorus 
   Жанр: Классика
   Страна : Германия
@@ -74,7 +145,7 @@ const data = {
   Описание: 2LP, Gatefold, Club Edition, Vocals – Cornell MacNeil, Placido Domingo, Teresa Stratas. Есть песочек, играет без заеданий и скачков.
   
   `,
-            full: `
+                  full: `
   Лейбл:WEA – 25-0072-1
   Формат:2 x Винил, пластинка, альбом, стерео, Разворот
   Состояние винила: VG (Very Good. Диск проигрывался очень часто. На пластинке заметны царапины и потёртости. Царапины, приводящие к заеданию диска не допускаются.)
@@ -109,11 +180,11 @@ const data = {
   •	Матрица / биение (биение с боковой стороны проштамповано, выгравировано 250072-C4 (2)): R / S Alsdorf 250072-1 C2 XXX
   •	Матрица / биение (биение на стороне D проштамповано, выгравировано 250072-D4 (1)): R / S Alsdorf 250072-1 D3 XXX
   `,
-        }, {
-            name: "Swan Lake: Suite From The Ballet (UK), 1958",
-            price: 1600,
+            }, {
+                  name: "Swan Lake: Suite From The Ballet (UK), 1958",
+                  price: 1600,
 
-            hover: `
+                  hover: `
   Исполнитель: Tchaikovsky / Efrem Kurtz / Philharmonia Orchestra / Yehudi Menuhin 
   Страна: Англия
   Лейбл: His Master's Voice
@@ -125,7 +196,7 @@ const data = {
   Вид: Оригинал 1958   Редкий
   
   `,
-            full: `
+                  full: `
   Формат:Винил, LP, стерео, Первое издание
   Страна:Англия
   Выпущен:1958
@@ -164,11 +235,11 @@ const data = {
   Матрица / Runout (Этикетка матрицы: Сторона B): 2YEA.61
   
   `,
-        }, {
-            name: "Yes, Giorgio, 1982",
-            price: 2600,
+            }, {
+                  name: "Yes, Giorgio, 1982",
+                  price: 2600,
 
-            hover: `
+                  hover: `
   Исполнитель: Luciano Pavarotti 
   Страна: США
   Лейбл: London
@@ -181,7 +252,7 @@ const data = {
   Вид: Оригинал 1982
   
   `,
-            full: `
+                  full: `
   Лейбл:	London Records – PDV 9001
   Формат:	Винил, пластинка
   Страна:	США
@@ -222,10 +293,10 @@ const data = {
   Цифровая запись.
   
   `,
-        }, {
-            name: "All Life Long (2LP), 2024",
-            price: 6500,
-            hover: `
+            }, {
+                  name: "All Life Long (2LP), 2024",
+                  price: 6500,
+                  hover: `
   Исполнитель: Kali Malone
   Страна:Франция
   Лейбл:Ideologic Organ
@@ -238,7 +309,7 @@ const data = {
   Вид: Оригинал 2024   Запечатан
   
   `,
-            full: `
+                  full: `
   Формат: 2 X LP
   Дата Выхода: 09 Февраля 2024 Г.
   Жанр: Современная Классика
@@ -246,11 +317,11 @@ const data = {
   Состояние конверта:SS (Запечатанная пластинка, в фабричной упаковке.)
   
   `,
-        }, {
-            name: "Gala-Abend Der Superstars Live Folge 2 (2LP), 1990",
-            price: 2500,
+            }, {
+                  name: "Gala-Abend Der Superstars Live Folge 2 (2LP), 1990",
+                  price: 2500,
 
-            hover: `
+                  hover: `
   Исполнитель: Various
   Страна: Швейцария
   Лейбл: Vivo
@@ -265,7 +336,7 @@ const data = {
   Вид: Оригинал 1990  Редкий
   
   `,
-            full: `
+                  full: `
   Страна: Швейцария
   Лейбл: Vivo
   Тип издания: Оригинал 1990
@@ -352,10 +423,10 @@ const data = {
   Код лейбла: LC 7507
   
   `,
-        }, {
-            name: "Symphonie No. 3 'Héroïque', 1975",
-            price: 2100,
-            hover: `
+            }, {
+                  name: "Symphonie No. 3 'Héroïque', 1975",
+                  price: 2100,
+                  hover: `
       Исполнитель: Beethoven - San Francisco Symphony Orchestra, Seiji Ozawa 
   Страна: Франция
   Лейбл: Philips
@@ -368,7 +439,7 @@ const data = {
   Вид: Оригинал 1975
   
   `,
-            full: `
+                  full: `
   Лейбл:	Philips – 6598 365
   Формат:	Винил, LP, Ограниченное издание, Специальное издание, Стерео
   Страна:	Франция
@@ -398,11 +469,11 @@ const data = {
   
   
   `,
-        }, {
-            name: "Heroic Beethoven (2LP), 2020",
-            price: 5000,
+            }, {
+                  name: "Heroic Beethoven (2LP), 2020",
+                  price: 5000,
 
-            hover: `
+                  hover: `
   Исполнитель: Beethoven 
   Страна:Европа
   Лейбл:Warner Classics
@@ -415,7 +486,7 @@ const data = {
   Вид: Оригинал 2020  Запечатан
   
   `,
-            full: `
+                  full: `
   Лейбл:Warner Classics – 190295318932
   Формат:2 x Винил, LP, Сборник, Стерео
   Страна:Европа
@@ -460,11 +531,11 @@ const data = {
   Матрица / Биение (Сторона D): BJ90080-02D1HL
   
   `,
-        }, {
-            name: "The 3 Tenors In Concert 1994 (2LP), 1994",
-            price: 5000,
+            }, {
+                  name: "The 3 Tenors In Concert 1994 (2LP), 1994",
+                  price: 5000,
 
-            hover: `
+                  hover: `
   Исполнитель: Carreras - Domingo - Pavarotti with Mehta 
   Страна:Европа
   Лейбл:Warner Classics
@@ -477,7 +548,7 @@ const data = {
   Вид: Переиздание 2017  Запечатан
   
   `,
-            full: `
+                  full: `
   Лейбл:Teldec – 4509-96200-1
   Формат:2 x Виниловый, LP, альбом
   Страна:Германия
@@ -547,10 +618,10 @@ const data = {
   
   
   `,
-        }, {
-            name: "Placido!, 1981",
-            price: 1800,
-            hover: `
+            }, {
+                  name: "Placido!, 1981",
+                  price: 1800,
+                  hover: `
   Исполнитель: Placido Domingo
   Страна:Англия
   Лейбл:Camden
@@ -562,7 +633,7 @@ const data = {
   Вид: Переиздание 1988 
   
   `,
-            full: `
+                  full: `
   Лейбл:Камден – CD 1229
   Формат:Винил, Пластинка, Альбом, Переиздание
   Страна:Англия
@@ -619,11 +690,11 @@ const data = {
   
   
   `,
-        }, {
-            name: " The Art Of Pavarotti (UK), 1977",
-            price: 3000,
+            }, {
+                  name: " The Art Of Pavarotti (UK), 1977",
+                  price: 3000,
 
-            hover: `
+                  hover: `
   Исполнитель: Luciano Pavarotti
   Страна:Англия
   Лейбл:Decca
@@ -636,7 +707,7 @@ const data = {
   Вид:Оригинал 1977
   
   `,
-            full: `
+                  full: `
   
   Лейбл:Decca – SXL 6839
   Формат:Винил, LP, Компиляция, Репресс, Стерео, HD1
@@ -668,13 +739,13 @@ const data = {
   Искусство Паваротти выпускается в Англии на лейблах.
   
   `,
-        },],
+            },],
 
-    djaz: [{
-        name: " Blowin' In The Wind, 1966",
-        price: 4200,
+      djaz: [{
+            name: " Blowin' In The Wind, 1966",
+            price: 4200,
 
-        hover: `
+            hover: `
   Исполнитель: Stevie Wonder
   Страна:Голландия
   Лейбл:Tamla Motown
@@ -686,7 +757,7 @@ const data = {
   Вид: Оригинал 1966  Редкий
   
   `,
-        full: `
+            full: `
   
   Лейбл:Tamla Motown – T-54136
   Формат:Винил, 7 дюймов, 45 об/мин, сингл
@@ -710,11 +781,11 @@ const data = {
   Матрица / биение (Выгравированная сторона биения B): TK 4-M- 0712 X T.
   
   `,
-    }, {
-        name: "The Platinum Collection - 42 All Time Classics (3LP), 2017",
-        price: 7000,
+      }, {
+            name: "The Platinum Collection - 42 All Time Classics (3LP), 2017",
+            price: 7000,
 
-        hover: `
+            hover: `
   Исполнитель: Nina Simone
   Страна:Европа
   Лейбл:Not Now Music
@@ -727,7 +798,7 @@ const data = {
   Вид: Оригинал 2017   Запечатан  Цветной
   
   `,
-        full: `
+            full: `
   
   Лейбл: Not Now Music
   Серии:Платиновая коллекция (9)
@@ -801,10 +872,10 @@ const data = {
   Общество защиты прав: MCPS
   
   `,
-    }, {
-        name: "The Best Of Louis Armstrong, 1970",
-        price: 3500,
-        hover: `
+      }, {
+            name: "The Best Of Louis Armstrong, 1970",
+            price: 3500,
+            hover: `
   Исполнитель:Louis And The All Stars 
   Страна:Франция
   Лейбл:Audio Fidelity
@@ -816,7 +887,7 @@ const data = {
   Вид: Оригинал 1970   Редкий
   
   `,
-        full: `
+            full: `
   
   Лейбл: Точность воспроизведения звука – AFSD 9005
   Формат: Винил, Пластинка, альбом
@@ -864,12 +935,12 @@ const data = {
   Общество защиты прав: BIEM
   
   `,
-    }, {
-        name: "Invites You To Listen, 1967",
-        price: 3500,
+      }, {
+            name: "Invites You To Listen, 1967",
+            price: 3500,
 
 
-        hover: `
+            hover: `
   Исполнитель: Ray Charles 
   Страна:Франция
   Лейбл:Stateside
@@ -881,7 +952,7 @@ const data = {
   Вид: Оригинал 1967  Редкий
   
   `,
-        full: `
+            full: `
   
   Лейбл:ABC Records – ABC-595
   Формат: Винил, Пластинка, Альбом, Моно
@@ -921,11 +992,11 @@ const data = {
   Матрица / Биение (Сторона B, выгравирована): ABC-595-B ② LW
   
   `,
-    }, {
-        name: "Live-Evil (2LP, UK), 1972",
-        price: 7500,
+      }, {
+            name: "Live-Evil (2LP, UK), 1972",
+            price: 7500,
 
-        hover: `
+            hover: `
   Исполнитель: Miles Davis
   Страна:Англия
   Лейбл:CBS
@@ -938,7 +1009,7 @@ const data = {
   Вид:Оригинал 1972  Редкий
   
   `,
-        full: `
+            full: `
   Лейбл:CBS – 67219
   Формат:2 x Винил, пластинка, альбом, Стерео
   Страна:Англия
@@ -993,11 +1064,11 @@ const data = {
   Матрица / Биение (Биение D): S 64576 B1 S 67219 D 4 A
   
   `,
-    }, {
-        name: "We Want Miles (2LP, USA), 1982",
-        price: 8000,
+      }, {
+            name: "We Want Miles (2LP, USA), 1982",
+            price: 8000,
 
-        hover: `
+            hover: `
   Исполнитель: Miles Davis
   Страна:США
   Лейбл:Get On Down, Columbia
@@ -1010,7 +1081,7 @@ const data = {
   Вид: Переиздание 2022  Запечатан   Цветной
   
   `,
-        full: `
+            full: `
   Жанр:Джаз
   Стиль:Фьюжн
   Год:1982
@@ -1026,11 +1097,11 @@ const data = {
   •	Kix
   
   `,
-    }, {
-        name: "  Sinatra - Basie, 1962",
-        price: 5000,
+      }, {
+            name: "  Sinatra - Basie, 1962",
+            price: 5000,
 
-        hover: `
+            hover: `
   Исполнитель: Sinatra – Basie
   Страна:Европа
   Лейбл:20th Century Masterworks
@@ -1043,7 +1114,7 @@ const data = {
   Вид:Переиздание 2021  Запечатан  Цветной
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:20th Century Masterworks
   Год выпуска:1962
@@ -1101,11 +1172,11 @@ const data = {
   Матрица / Биение (Биение, сторона B): 152184E2/A
   
   `,
-    }, {
-        name: "The Soul Legend (3LP, Box-set), 2019",
-        price: 8000,
+      }, {
+            name: "The Soul Legend (3LP, Box-set), 2019",
+            price: 8000,
 
-        hover: `
+            hover: `
   Исполнитель: Ray Charles
   Страна:Франция
   Лейбл:Wagram Music
@@ -1118,7 +1189,7 @@ const data = {
   Вид: Оригинал 2019  Запечатан
   
   `,
-        full: `
+            full: `
   Лейбл:Wagram Music
   Формат:3 x Виниловый, LP, Сборник, Ограниченное издание, Ремастированный
   Страна:Франция
@@ -1191,11 +1262,11 @@ const data = {
   Общество защиты прав: SACEM
   
   `,
-    }, {
-        name: " Forbidden Fruit, 2020",
-        price: 5000,
+      }, {
+            name: " Forbidden Fruit, 2020",
+            price: 5000,
 
-        hover: `
+            hover: `
   Исполнитель: Nina Simone
   Страна:Европа
   Лейбл:20th Century Masterworks
@@ -1208,7 +1279,7 @@ const data = {
   Вид:Оригинал 2020 Запечатан  Цветной
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:20th Century Masterworks
   Тип издания:Оригинал 2020
@@ -1241,11 +1312,11 @@ const data = {
   Штрих-код: 8436563183027
   
   `,
-    }, {
-        name: " I've Gotta Be Me (UK), 1969",
-        price: 7000,
+      }, {
+            name: " I've Gotta Be Me (UK), 1969",
+            price: 7000,
 
-        hover: `
+            hover: `
   Исполнитель: Tony Bennett
   Страна:Европа
   Лейбл:20th Century Masterworks
@@ -1255,7 +1326,7 @@ const data = {
   Стиль:Приятного прослушивания, Вокал
   
   `,
-        full: `
+            full: `
   Трек-лист:
   1		Они не могут отнять это у меня
   2		Что -то в твоей улыбке
@@ -1293,12 +1364,12 @@ const data = {
   Штрих -код: 5 017261 208866
 
   `,
-    },],
-    bluz: [{
-        name: "20/20, 1985",
-        price: 5000,
+      },],
+      bluz: [{
+            name: "20/20, 1985",
+            price: 5000,
 
-        hover: `
+            hover: `
   Исполнитель: George Benson
   Страна:Франция
   Лейбл:Warner Bros.
@@ -1311,7 +1382,7 @@ const data = {
   Вид:Оригинал 1985
   
   `,
-        full: ` 
+            full: ` 
   Страна:Франция
   Лейбл:Warner Bros.
   Год выпуска:1985
@@ -1349,11 +1420,11 @@ const data = {
   Матрица / биение (Штампованное биение, сторона B): 50 D
   
   `,
-    }, {
-        name: " After Hours, 1992",
-        price: 6000,
+      }, {
+            name: " After Hours, 1992",
+            price: 6000,
 
-        hover: `
+            hover: `
   Исполнитель: Gary Moore
   Страна:Англия и Европа
   Лейбл:Virgin
@@ -1365,7 +1436,7 @@ const data = {
   Вид:Переиздание 2017 Запечатан
   
   `,
-        full: `
+            full: `
   Лейбл:Virgin – CDV 2684, Virgin – 262 558
   Формат:CD, Альбом
   Страна:Европа и Англия 
@@ -1477,11 +1548,11 @@ const data = {
   Матрица / биение (Вариант 22, зеркальное отображение): CDV-2684 31 A9 DADC АВСТРИЯ
   
   `,
-    }, {
-        name: "Run For Cover, 1985",
-        price: 6000,
+      }, {
+            name: "Run For Cover, 1985",
+            price: 6000,
 
-        hover: `
+            hover: `
   Исполнитель: Gary Moore
   Страна:Европа
   Лейбл:10, Virgin
@@ -1493,7 +1564,7 @@ const data = {
   Вид: Переиздание 2017 Запечатан
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:10, Virgin
   Страна:Великобритания и Европа
@@ -1649,11 +1720,11 @@ const data = {
   Код SID формы (Диск 2 - Вариант 6): [отсутствует]
   
   `,
-    }, {
-        name: "Frank Sinatra Sings For Only The Lonely, 1958",
-        price: 4500,
+      }, {
+            name: "Frank Sinatra Sings For Only The Lonely, 1958",
+            price: 4500,
 
-        hover: `
+            hover: `
   Исполнитель: Frank Sinatra
   Страна:Европа
   Лейбл:WaxTime In Color
@@ -1666,7 +1737,7 @@ const data = {
   Вид:Переиздание 2018 Запечатан Цветной
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:WaxTime In Color
   Год издания:2018
@@ -1691,11 +1762,11 @@ const data = {
   
   
   `,
-    }, {
-        name: "Cheek To Cheek Live! (2LP), 2022",
-        price: 5000,
+      }, {
+            name: "Cheek To Cheek Live! (2LP), 2022",
+            price: 5000,
 
-        hover: `
+            hover: `
   Исполнитель: Tony Bennett & Lady Gaga
   Страна:Европа
   Лейбл:Streamline, Columbia, Interscope
@@ -1708,7 +1779,7 @@ const data = {
   Вид: Оригинал 2022  Запечатан
   
   `,
-        full: `
+            full: `
   
   Страна:Европа
   Лейбл:Streamline, Columbia, Interscope
@@ -1738,11 +1809,11 @@ const data = {
   •	Tony Bennett & Lady Gaga–	But Beautiful	
   •	Tony Bennett & Lady Gaga–	It Don't Mean A Thing (If It Ain't Got That Swing)
   `,
-    }, {
-        name: "Shapes Of Things (2LP), 1977",
-        price: 5000,
+      }, {
+            name: "Shapes Of Things (2LP), 1977",
+            price: 5000,
 
-        hover: `
+            hover: `
   Исполнитель: Yardbirds
   Страна:Германия
   Лейбл:Charly, Bellaphon
@@ -1755,7 +1826,7 @@ const data = {
   Вид:Оригинал 1977
   
   `,
-        full: `
+            full: `
   Страна:Германия
   Лейбл:Charly, Bellaphon
   Жанр:Рок, Блюз
@@ -1790,11 +1861,11 @@ const data = {
   •	Shapes Of Things
   
   `,
-    }, {
-        name: "Blues Deluxe Vol. 2, 2023",
-        price: 6000,
+      }, {
+            name: "Blues Deluxe Vol. 2, 2023",
+            price: 6000,
 
-        hover: `
+            hover: `
   Исполнитель: Joe Bonamassa
   Страна:Европа
   Лейбл:J&R Adventures
@@ -1807,7 +1878,7 @@ const data = {
   Вид:Оригинал 2023  Запечатан  Цветное
   
   `,
-        full: `
+            full: `
   Лейбл:J&R Adventures
   Страна:Европа
   Формат:Винил, Пластинка, Альбом, Стерео, Синий, 180 граммов
@@ -1863,11 +1934,11 @@ const data = {
   
   
   `,
-    }, {
-        name: "Now Serving: Royal Tea Live From The Ryman (2LP), 2021",
-        price: 6500,
+      }, {
+            name: "Now Serving: Royal Tea Live From The Ryman (2LP), 2021",
+            price: 6500,
 
-        hover: `
+            hover: `
   Исполнитель: Joe Bonamassa
   Страна:Европа
   Лейбл:Provogue
@@ -1880,7 +1951,7 @@ const data = {
   Вид:Оригинал 2021  Запечатан  Цветной
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:Provogue
   Формат:Blu-ray, Стерео, Многоканальный
@@ -1915,11 +1986,11 @@ const data = {
   Штрих-код (распечатанный): 7 1157491736 5
   
   `,
-    }, {
-        name: "The Breeze (An Appreciation Of JJ Cale) (2LP), 2014",
-        price: 15000,
+      }, {
+            name: "The Breeze (An Appreciation Of JJ Cale) (2LP), 2014",
+            price: 15000,
 
-        hover: `
+            hover: `
   Исполнитель: Eric Clapton & Friends
   
   Страна:Европа
@@ -1933,7 +2004,7 @@ const data = {
   Вид:Оригинал 2014 Редкий Запечатан
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:Bushbranch, Polydor
   Формат:Винил, LP, Винил, пластинка, односторонняяВсе носители, альбом, 180 г
@@ -1981,11 +2052,11 @@ const data = {
   
   
   `,
-    }, {
-        name: "Together Brothers (Original Motion Picture Soundtrack), 1974",
-        price: 4000,
+      }, {
+            name: "Together Brothers (Original Motion Picture Soundtrack), 1974",
+            price: 4000,
 
-        hover: `
+            hover: `
   Исполнитель: Barry White, Love Unlimited, The Love Unlimited Orchestra
   Страна:Голландия
   Лейбл:Philips
@@ -1997,7 +2068,7 @@ const data = {
   Вид:Оригинал 1974
   
   `,
-        full: `
+            full: `
   Страна:Голландия
   Лейбл:Philips
   Формат:Винил, Пластинка, альбом, Промо
@@ -2031,13 +2102,13 @@ const data = {
   B12	Люди завтрашнего дня - дети сегодняшнего
   
   `,
-    },
-    ],
-    rok: [{
-        name: "The Fool Circle Tour 1981 (2LP), 2023",
-        price: 8000,
+      },
+      ],
+      rok: [{
+            name: "The Fool Circle Tour 1981 (2LP), 2023",
+            price: 8000,
 
-        hover: `
+            hover: `
   Исполнитель: Nazareth
   Страна:Европа
   Тип издания: Оригинал 2023
@@ -2049,7 +2120,7 @@ const data = {
   Вид:Оригинал 2023 Запечатан Цветной
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:NEMS – NEL 6019
   Формат:Винил, Пластинка, Альбом, Стерео
@@ -2117,11 +2188,11 @@ const data = {
   
   
   `,
-    }, {
-        name: "WhoCares (2LP), 2012",
-        price: 35000,
+      }, {
+            name: "WhoCares (2LP), 2012",
+            price: 35000,
 
-        hover: `
+            hover: `
   Исполнитель: Ian Gillan & Tony Iommi
   Страна:Германия
   Лейбл:Ear Music
@@ -2134,7 +2205,7 @@ const data = {
   Вид:Оригинал 2014 Редкий Запечатан
   
   `,
-        full: `
+            full: `
   Страна:Германия
   Лейбл:Ear Music
   Формат:2 x CD, Сборник, Ремастированный
@@ -2197,11 +2268,11 @@ const data = {
   Мастеринг SID-кода (CD1 / вариант 1): IFPI L573
   
   `,
-    }, {
-        name: "The Best Of Blondie (UK), 1981",
-        price: 8500,
+      }, {
+            name: "The Best Of Blondie (UK), 1981",
+            price: 8500,
 
-        hover: `
+            hover: `
   Исполнитель: Blondie
   Страна:Англия
   Лейбл:Chrysalis
@@ -2213,7 +2284,7 @@ const data = {
   Вид:Переиздание 1989  Редкий
   
   `,
-        full: `
+            full: `
   Лейбл:Chrysalis – CHR 1337
   Формат:Винил, Пластинка, Сборник
   Страна:Англия
@@ -2281,11 +2352,11 @@ const data = {
   Матрица / Биение (биение стороны B, вариант 2): CHR-1337-BS-2-REP1
   
   `,
-    }, {
-        name: "Aerosmith, 1973",
-        price: 10000,
+      }, {
+            name: "Aerosmith, 1973",
+            price: 10000,
 
-        hover: `
+            hover: `
   Исполнитель: Aerosmith
   Страна:Европа
   Лейбл:CBS
@@ -2297,7 +2368,7 @@ const data = {
   Вид:Переиздание 1990  Редкий
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:CBS
   Формат:Винил, Пластинка, Альбом, Опечатка, Terre Haute Pressing
@@ -2360,11 +2431,11 @@ const data = {
   Матрица / биение (Сторона 2 , вариант 3 (штампованная)): Стр. 32005-2A
   
   `,
-    }, {
-        name: "Heart Still Beating (2LP), 1990",
-        price: 8000,
+      }, {
+            name: "Heart Still Beating (2LP), 1990",
+            price: 8000,
 
-        hover: `
+            hover: `
   Исполнитель: Roxy Music
   Страна:Европа
   Лейбл:Virgin, EG
@@ -2377,7 +2448,7 @@ const data = {
   Вид:Оригинал 1990 Редкий
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:Virgin, EG
   Формат:2 x Винил, LP, Альбом, Стерео, Gatefold
@@ -2454,11 +2525,11 @@ const data = {
   Матрица / биение (биение на стороне D, штампованное): 010 DM304069 B-1
   
   `,
-    }, {
-        name: " Great Hits, 1969",
-        price: 6000,
+      }, {
+            name: " Great Hits, 1969",
+            price: 6000,
 
-        hover: `
+            hover: `
   Исполнитель: Rolling Stones
   Страна:Германия
   Лейбл:Decca
@@ -2472,7 +2543,7 @@ const data = {
   
   
   `,
-        full: `
+            full: `
   Лейбл:Decca – ND 265
   Серии:Musik Für Alle
   Формат:Винил, LP, Сборник
@@ -2505,11 +2576,11 @@ const data = {
   Версия 3 с разными лейблами - отличается надпись 'STEREO' и разные записи на обороте Маленькие лица, животные,...
   
   `,
-    }, {
-        name: " Physical Graffiti (2LP, 1-st, UK), 1975",
-        price: 13000,
+      }, {
+            name: " Physical Graffiti (2LP, 1-st, UK), 1975",
+            price: 13000,
 
-        hover: `
+            hover: `
   Исполнитель: Led Zeppelin
   Страна:Англия
   Лейбл:Swan Song
@@ -2523,7 +2594,7 @@ const data = {
   Вид:Оригинал 1975  Хит продаж
   
   `,
-        full: `
+            full: `
   Страна:Англия
   Лейбл:Swan Song
   Формат:2 x Винил, LP, альбом, Presswell (PR) печать
@@ -2600,11 +2671,11 @@ const data = {
   Матрица / биение (сторона этикетки D): (ST-SS-753312 PR)
   
   `,
-    }, {
-        name: "Loud'N'Proud (1-st, UK), 1973",
-        price: 9000,
+      }, {
+            name: "Loud'N'Proud (1-st, UK), 1973",
+            price: 9000,
 
-        hover: `
+            hover: `
   Исполнитель: Nazareth
   Страна:Англия
   Лейбл:Mooncrest
@@ -2617,7 +2688,7 @@ const data = {
   Вид:Оригинал 1973   Популярно
   
   `,
-        full: `
+            full: `
   Лейбл:Mooncrest
   Формат:Винил, Пластинка, Альбом, Gatefold
   Страна:Великобритания
@@ -2676,11 +2747,11 @@ const data = {
   Матрица / биение (проштамповано биение на стороне B, вариант 3): CREST 4 B-1U GA 2
   
   `,
-    }, {
-        name: "Abbey Road (USA), 1969",
-        price: 10000,
+      }, {
+            name: "Abbey Road (USA), 1969",
+            price: 10000,
 
-        hover: `
+            hover: `
   Исполнитель: Beatles 
   Страна:США
   Лейбл:Apple
@@ -2693,7 +2764,7 @@ const data = {
   Вид:Оригинал 1969 Хит продаж
   
   `,
-        full: `
+            full: `
   Лейбл:Apple Records – 1 C 062-04 243
   Формат:Винил, Пластинка, Альбом, Стерео, 3-й выпуск
   Страна:Германия
@@ -2753,11 +2824,11 @@ const data = {
   Матрица / биение (сторона биения B, штампованная, вариант 4): 1C062-04243-B-1
   
   `,
-    }, {
-        name: "At Home, 1969",
-        price: 11000,
+      }, {
+            name: "At Home, 1969",
+            price: 11000,
 
-        hover: `
+            hover: `
   Исполнитель: Shocking Blue
   Страна:Германия
   Лейбл:Metronome, Pink Elephant
@@ -2770,7 +2841,7 @@ const data = {
   Вид:Оригинал 1969
   
   `,
-        full: `
+            full: `
   Страна:Германия
   Лейбл:Metronome, Pink Elephant
   Формат:Винил, Пластинка, Альбом, Стерео, Gatefold
@@ -2823,12 +2894,12 @@ const data = {
   
   
   `,
-    },],
-    pop: [{
-        name: "Midnights, 2022",
-        price: 8000,
+      },],
+      pop: [{
+            name: "Midnights, 2022",
+            price: 8000,
 
-        hover: `
+            hover: `
   Исполнитель:Taylor Swift
   Страна:Европа
   Лейбл:Republic
@@ -2841,7 +2912,7 @@ const data = {
   Вид:Оригинал 2022   Запечатан  Цветной
   
   `,
-        full: `
+            full: `
   Лейбл:Republic Records – 2445790067
   Формат:	Винил, Пластинка, Альбом, Специальное издание, Оранжевый полупрозрачный мрамор [Blood Moon Marbled]
   Страна:США и Европа
@@ -2947,11 +3018,11 @@ const data = {
   
   
   `,
-    }, {
-        name: "1989 (Taylor's Version) (2LP), 2023",
-        price: 8000,
+      }, {
+            name: "1989 (Taylor's Version) (2LP), 2023",
+            price: 8000,
 
-        hover: `
+            hover: `
   Исполнитель: Taylor Swift  
   Страна:Европа
   Лейбл:Republic
@@ -2964,7 +3035,7 @@ const data = {
   Вид:Оригинал 2023  Запечатан Цветной
   
   `,
-        full: `
+            full: `
   Страна:Европа
   Лейбл:Republic
   Формат:	2 x Винил, пластинка, альбом
@@ -3050,11 +3121,11 @@ const data = {
   Матрица / биение (сторона D): BRMBD0500E-D RE1 JH-H STERLING
   
   `,
-    }, {
-        name: " HIStory Continues (2LP), 1995",
-        price: 6500,
+      }, {
+            name: " HIStory Continues (2LP), 1995",
+            price: 6500,
 
-        hover: `
+            hover: `
   Исполнитель: Michael Jackson
   Страна:Европа
   Лейбл:MJJ Productions, Epic, Legacy, Sony Music
@@ -3067,7 +3138,7 @@ const data = {
   Вид:Переиздание 2018  Запечатан   Цветной
   
   `,
-        full: `
+            full: `
   Лейбл:MJJ Productions – 190758664514, Эпопея – 190758664514, Наследие – 190758664514, Sony Music – 190758664514
   Формат:	2 x Виниловая, пластинка, Альбом, Диск с картинками, переиздание
   Страна:Европа
@@ -3188,11 +3259,11 @@ const data = {
   Матрица / Биение (сторона биения D): MRP1360 / 19075866451/CD-D 175710E4/A 122674 D
   
   `,
-    }, {
-        name: "Christmas, 2023",
-        price: 7000,
+      }, {
+            name: "Christmas, 2023",
+            price: 7000,
 
-        hover: `
+            hover: `
   Исполнитель: Cher
   Страна:Европа
   Лейбл:Warner
@@ -3205,7 +3276,7 @@ const data = {
   Вид:Оригинал 2023   Запечатан  Цветной
   
   `,
-        full: `
+            full: `
   Лейбл:Warner Records – 093624851196
   Формат:	CD, Альбом, Серебряный логотип
   Страна:	Европа
@@ -3252,11 +3323,11 @@ const data = {
   
   
   `,
-    }, {
-        name: " XX, 2024",
-        price: 6500,
+      }, {
+            name: " XX, 2024",
+            price: 6500,
 
-        hover: `
+            hover: `
   Исполнитель: Il Divo
   Страна:Англия, Европа и США
   Лейбл:Thirty Tigers
@@ -3269,7 +3340,7 @@ const data = {
   Вид:Оригинал 2024  Запечатан  Цветной
   
   `,
-        full: `
+            full: `
   Лейбл: Thirty Tigers – 691835888734
   Формат:	Винил, Пластинка, Винил с серебристым металликом
   Страна:	Великобритания, Европа И США
@@ -3306,11 +3377,11 @@ const data = {
   Штрих-код (на обратной стороне обложки): 691835888934
   
   `,
-    }, {
-        name: " Power Of Ten, 1992",
-        price: 3000,
+      }, {
+            name: " Power Of Ten, 1992",
+            price: 3000,
 
-        hover: `
+            hover: `
   Исполнитель: Chris de Burgh
   Страна:Зимбабве
   Лейбл:A&M
@@ -3323,7 +3394,7 @@ const data = {
   Вид:Оригинал 1992  Редкий
   
   `,
-        full: `
+            full: `
   Лейбл:A&M Records – 397 188-2
   Формат:	CD, Альбом
   Страна:	Зимбабве
@@ -3373,11 +3444,11 @@ const data = {
   Матрица / Биение (вариант 3): СДЕЛАНО В ГЕРМАНИИ
   
   `,
-    }, {
-        name: "Claudia Canta Adriano (1-st, Italy), 1984",
-        price: 5500,
+      }, {
+            name: "Claudia Canta Adriano (1-st, Italy), 1984",
+            price: 5500,
 
-        hover: `
+            hover: `
   Исполнитель: Claudia Mori
   Страна:Италия
   Лейбл:CGD
@@ -3390,7 +3461,7 @@ const data = {
   Вид:Оригинал 1984  Редкий
   
   `,
-        full: `
+            full: `
   Лейбл:CGD – 30 CGD 20443
   Формат:	Кассета, Альбом
   Страна:	Италия
@@ -3418,11 +3489,11 @@ const data = {
   
   
   `,
-    }, {
-        name: " Body Language, 2003",
-        price: 6500,
+      }, {
+            name: " Body Language, 2003",
+            price: 6500,
 
-        hover: `
+            hover: `
   Исполнитель: Kylie
   Страна:Европа
   Лейбл:Parlophone
@@ -3435,7 +3506,7 @@ const data = {
   Вид:Переиздание 2024   Запечатан  Цветной
   
   `,
-        full: `
+            full: `
   Лейбл:Parlophone – 7243 595758 2 7, Parlophone – 5957582, Parlophone – 595 6452
   Формат:	CD, Альбом, защищен от копирования
   Страна:Европа
@@ -3518,11 +3589,11 @@ const data = {
   Общество защиты прав: Бел Биэм
   
   `,
-    }, {
-        name: "All Fired Up, 1988",
-        price: 6500,
+      }, {
+            name: "All Fired Up, 1988",
+            price: 6500,
 
-        hover: `
+            hover: `
   Исполнитель: Smokie
   Страна:Германия
   Лейбл:Maze Music
@@ -3536,7 +3607,7 @@ const data = {
   Вид:Оригинал 1988  Редкий 
   
   `,
-        full: `
+            full: `
   Лейбл:Maze Music – SPV 08-4607
   Формат:	Винил, Пластинка, альбом
   Страна:	Германия
@@ -3586,11 +3657,11 @@ const data = {
   
   
   `,
-    }, {
-        name: "Bad, 1987",
-        price: 10000,
+      }, {
+            name: "Bad, 1987",
+            price: 10000,
 
-        hover: `
+            hover: `
   Исполнитель: Michael Jackson
   Страна:Европа
   Лейбл:Epic
@@ -3604,7 +3675,7 @@ const data = {
   
   
   `,
-        full: `
+            full: `
   Лейбл:	Epic – E 40600, Epic – OE 40600
   Формат:	Винил, Пластинка, Альбом, Стерео, Carrollton Pressing, Gatefold
   Страна:	Европа
@@ -3675,5 +3746,5 @@ const data = {
   Матрица / биение (сторона этикетки A): AL 40600
   Матрица / биение (этикетка на стороне B): BL 40600
   `,
-    },]
+      },]
 }
