@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { User } from '../user/user.entity';
-import { UserService } from '../user/user.service';
+import { User } from '../entities/user/user.entity';
+import { UserService } from '../entities/user/user.service';
 
 @Controller('noauth')
 export class NoauthController {

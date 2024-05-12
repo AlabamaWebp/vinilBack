@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
-import { UserService } from './user/user.service';
-import { User } from './user/user.entity';
-import { ProductService } from './product/product.service';
-import { ProductClassService } from './product/productClass.service';
-import { userProductService } from './order/userProduct.service';
-import { ProductClass } from './product/productClass.entity';
+import { UserService } from '../entities/user/user.service';
+import { User } from '../entities/user/user.entity';
+import { ProductService } from '../entities/product/product.service';
+import { ProductClassService } from '../entities/productClass/productClass.service';
+import { userProductService } from '../entities/order/userProduct.service';
+import { ProductClass } from '../entities/productClass/productClass.entity';
 
 @Controller('database')
 export class DatabaseController {

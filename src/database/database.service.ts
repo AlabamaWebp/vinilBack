@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from './user/user.service';
-import { ProductService } from './product/product.service';
-import { ProductClassService } from './product/productClass.service';
+import { UserService } from './entities/user/user.service';
+import { ProductService } from './entities/product/product.service';
+import { ProductClassService } from './entities/productClass/productClass.service';
 
 @Injectable()
 export class DatabaseService {
