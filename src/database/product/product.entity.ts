@@ -5,8 +5,8 @@ import { ProductClass } from './productClass.entity';
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => ProductClass, (el) => el.id)
-  class: number;
+  @ManyToOne(() => ProductClass, {eager: true})
+  className: ProductClass | string;
   @Column()
   name: string;
   @Column()
@@ -15,8 +15,8 @@ export class Product extends BaseEntity {
   hover: string;
   @Column()
   full: string; 
-  @Column()
-  count: number; 
+  // @Column()
+  // count: number; 
 }
 export { ProductClass };
 

@@ -4,36 +4,28 @@ import { User } from './user/user.entity';
 import { ProductService } from './product/product.service';
 import { ProductClassService } from './product/productClass.service';
 import { userProductService } from './order/userProduct.service';
+import { ProductClass } from './product/productClass.entity';
 
 @Controller('database')
 export class DatabaseController {
-  constructor(private readonly user: UserService,
+  constructor(
+    // private readonly user: UserService,
     private readonly product: ProductService,
-    private readonly product_class: ProductClassService,
+    // private readonly product_class: ProductClassService,
     private readonly user_product: userProductService,
   ) { }
 
-  // @Get('getAll')
-  // async findAll(): Promise<User[]> {
-  //   return this.user.findAll();
-  // }
-
-  @Post('createAccount')
-  async createAcc(@Body() user: User): Promise<any> //Promise<string | null> 
-  {
-    return this.user.create(user);
-  }
-  @Get('checkLogin/:login')
-  async checkLogin(@Param('login') user: string): Promise<boolean> {
-    return this.user.find(user);
-  }
 
   @Get('products')
   async products(@Param('login') user: string): Promise<any> {
-    return this.product.findAll();
+    return (await this.product.findAll()).map(el => {
+      el.className = (el.className as ProductClass).name;
+      return el
+    });
   }
   @Get('products/:id')
   async productsId(@Param('id') id: number): Promise<any> {
     return this.product.find(id);
   }
+
 }

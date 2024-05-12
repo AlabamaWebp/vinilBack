@@ -6,13 +6,15 @@ import { ProductClassService } from './product/productClass.service';
 @Injectable()
 export class DatabaseService {
     constructor(private user: UserService, private products: ProductService, private productsClass: ProductClassService) { }
-    recreate = false; // process.env.create_table === '1'
+    recreate = process.env.create_table === '1'; // process.env.create_table === '1'
     onModuleInit() {
         console.log(process.env.create_table);
         if (this.recreate) {
             this.createUser();
             this.createClassProducts();
-            this.createProducts();
+            setTimeout(() => {
+                  this.createProducts();
+            }, 1000);
         }
     }
     createUser() {
@@ -41,8 +43,8 @@ export class DatabaseService {
         class_id.forEach((el, i) => {
             d[el].forEach((el2) => {
                 const tmp = el2;
-                tmp['class'] = i + 1; // el
-                tmp['count'] = getRandomInt();
+                tmp['className'] = i + 1; // el
+            //     tmp['count'] = getRandomInt();
                 this.products.create(tmp);
             })
         })

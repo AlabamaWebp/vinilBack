@@ -6,14 +6,14 @@ import { Product } from '../product/product.entity';
 export class UserProduct extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, {eager: true})
   user: number;
-  @ManyToOne(() => Product, (pr) => pr.id)
+  @ManyToOne(() => Product, {eager: true})
   product: number;
   @Column()
-  count: number;
-  @Column()
   status: number; // 0 - favorite / 1 - bascet / 2 - order
+  // @Column()
+  // count: number;
 }
 // {
 // "login": "1",

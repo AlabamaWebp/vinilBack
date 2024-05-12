@@ -42,4 +42,11 @@ export class UserService {
       return !!el;
     })
   }
+  async findWithPassword(data: {login: string, password: string}): Promise<User> {
+    return await this.userRepository.findOneBy(data)
+    .then(el => {
+      console.log(el.login); 
+      return el;
+    })
+  }
 }
