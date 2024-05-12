@@ -16,7 +16,7 @@ export class NoauthController {
     }
     @Get('checkLogin/:login')
     async checkLogin(@Param('login') user: string): Promise<boolean> {
-        return this.user.find(user);
+        return this.user.find(user).then(el => !!el);
     }
 
 }

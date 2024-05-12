@@ -9,6 +9,7 @@ export class DatabaseService {
     recreate = process.env.create_table === '1'; // process.env.create_table === '1'
     onModuleInit() {
         console.log(process.env.create_table);
+        
         if (this.recreate) {
             this.createUser();
             this.createClassProducts();

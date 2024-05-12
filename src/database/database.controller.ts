@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { UserService } from './user/user.service';
 import { User } from './user/user.entity';
 import { ProductService } from './product/product.service';
@@ -16,16 +16,29 @@ export class DatabaseController {
   ) { }
 
 
-  @Get('products')
-  async products(@Param('login') user: string): Promise<any> {
-    return (await this.product.findAll()).map(el => {
-      el.className = (el.className as ProductClass).name;
-      return el
-    });
+  @Get('products/:login')
+  async products(@Param('login') login: string): Promise<any> {
+    return await this.product.findAll();
   }
-  @Get('products/:id')
-  async productsId(@Param('id') id: number): Promise<any> {
-    return this.product.find(id);
+  @Get('products/:login/:id')
+  async productsId(@Param('login') login: string, @Param('id') id: number): Promise<any> {
+    return this.product.findOne(id);
+  }
+
+
+  @Get('getOrderByStatus/:login/:status')
+  async favorites(@Param('login') login: string, @Param('status') status: number): Promise<any> {
+    return await this.user_product.getByStatus(login, status);
+  }
+
+  @Post('createOrderByStatus/') // 0 - favorite / 1 - bascet / 2 - order
+  async createByStatus(@Body('login') data: {login: string, status: number, id: number}): Promise<any> {
+    return await this.user_product.createByStatus(data.login, data.status, data.id);
+  }
+
+  @Delete('deleteOrderByStatus/:id') // 0 - favorite / 1 - bascet / 2 - order
+  async deleteByStatus(@Param('id') id: number): Promise<any> {
+    return await this.user_product.deleteByStatus(id);
   }
 
 }

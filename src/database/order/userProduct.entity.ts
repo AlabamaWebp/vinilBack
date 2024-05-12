@@ -7,9 +7,9 @@ export class UserProduct extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @ManyToOne(() => User, {eager: true})
-  user: number;
+  user: User;
   @ManyToOne(() => Product, {eager: true})
-  product: number;
+  product: Product;
   @Column()
   status: number; // 0 - favorite / 1 - bascet / 2 - order
   // @Column()
