@@ -39,30 +39,46 @@ export class DatabaseService {
                   "Рок",
                   "Поп",
             ]
-            for (const el of classes) 
+            for (const el of classes)
                   await this.productsClass.create({ name: el } as any)
-            
+
       }
       async createProducts() {
             const class_id = Object.keys(data);
 
-            class_id.forEach((className, i1) => {
-                  data[className].forEach((el2, j1) => {
-                        const i = i1 + 1;
-                        const j = j1;
-                        el2['className'] = i; // el
-                        this.products.create(el2)
-                              .then(() => {
+            for (let i = 1; i <= class_id.length; i++) {
+                  const class1 = data[class_id[i - 1]]
+                  const className = class_id[i - 1]
+                  for (let j = 1; j <= class1.length; j++) {
+                        const element = class1[j - 1];
+                        element['className'] = i;
+                        await this.products.create(element)
+                              .then(async () => {
                                     const tmp1 = imena[className];
                                     for (let ind = 1; ind <= imgs[`${tmp1}_${j}`]; ind++) {
                                           const img = `${tmp1}_${j}_${ind}`;
-                                          if (img && el2) {
-                                                this.productImg.create({ img: img, product: el2 } as any);
-                                          }
+                                          await this.productImg.create({ img: img, product: element } as any);
                                     }
                               });
-                  })
-            })
+                  }
+            }
+            // class_id.forEach(async (className, i1) => {
+            //       await data[className].forEach(async (el2, j1) => {
+            //             const i = i1 + 1;
+            //             const j = j1 + 1;
+            //             el2['className'] = i; // el
+            //             await this.products.create(el2)
+            //                   .then(() => {
+            //                         const tmp1 = imena[className];
+            //                         for (let ind = 1; ind <= imgs[`${tmp1}_${j}`]; ind++) {
+            //                               const img = `${tmp1}_${j}_${ind}`;
+            //                               if (img && el2) {
+            //                                     this.productImg.create({ img: img, product: el2 } as any);
+            //                               }
+            //                         }
+            //                   });
+            //       })
+            // })
       }
 }
 // function getRandomInt() {

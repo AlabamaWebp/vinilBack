@@ -2,7 +2,7 @@ import { Body, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProduct } from './userProduct.entity';
-import { ProductService, transform } from '../product/product.service';
+import { ProductService } from '../product/product.service';
 import { UserService } from '../user/user.service';
 
 @Injectable()

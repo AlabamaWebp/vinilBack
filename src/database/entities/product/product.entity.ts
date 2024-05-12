@@ -7,7 +7,7 @@ import { ProductClass } from '../productClass/productClass.entity';
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => ProductClass, { eager: true })
+  @ManyToOne(() => ProductClass)
   className: ProductClass | string;
   @Column()
   name: string;

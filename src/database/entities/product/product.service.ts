@@ -12,7 +12,7 @@ export class ProductService {
   ) { }
 
   async findAll(): Promise<Product[]> {
-    return transform(this.userRepository.find({ relations: ['images'] }));
+    return this.userRepository.find({ relations: ['images'] });
   }
 
   async create(user: Product): Promise<Product>  //Promise<User> 
@@ -21,17 +21,17 @@ export class ProductService {
   }
 
   async findOne(id: number): Promise<Product> {
-    return await this.userRepository.findOne({ where: { id: id }, relations: ['images'] })
+    return await this.userRepository.findOne({ where: { id: id }, relations: ['images', 'className'] })
   }
 }
 
-export async function transform(product: Promise<Product[]>): Promise<any[]> {
-  const tmp = await product;
-  return tmp.map(el => {
-    el.className = (el.className as ProductClass)?.name;
-    return el
-  });;
-}
+// export async function transform(product: Promise<Product[]>): Promise<any[]> {
+//   const tmp = await product;
+//   return tmp.map(el => {
+//     el.className = (el.className as ProductClass)?.name;
+//     return el
+//   });;
+// }
 
 @Injectable()
 export class ProductImgService {
