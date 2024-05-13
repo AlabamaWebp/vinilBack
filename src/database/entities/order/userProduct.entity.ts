@@ -7,13 +7,11 @@ export class UserProduct extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @ManyToOne(() => User, {eager: true})
-  user: User;
+  user: User | number;
   @ManyToOne(() => Product, {eager: true})
-  product: Product;
+  product: Product | number;
   @Column()
   status: number; // 0 - favorite / 1 - bascet / 2 - order
-  // @Column()
-  // count: number;
 }
 // {
 // "login": "1",

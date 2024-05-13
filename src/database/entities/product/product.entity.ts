@@ -19,6 +19,7 @@ export class Product extends BaseEntity {
   full: string;
   @OneToMany(() => ProductImg, productImage => productImage.product, { cascade: true })
   images: ProductImg[];
+  
 }
 export { ProductClass };
 
@@ -28,7 +29,7 @@ export class ProductImg extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @ManyToOne(() => Product, product => product.images) // {eager: true}
-  product: Product;
+  product: Product | number;
   @Column()
   img: string;
 }

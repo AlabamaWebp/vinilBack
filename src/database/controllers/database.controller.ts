@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query } from '@nestjs/common';
 import { UserService } from '../entities/user/user.service';
 import { User } from '../entities/user/user.entity';
 import { ProductImgService, ProductService } from '../entities/product/product.service';
@@ -18,18 +18,15 @@ export class DatabaseController {
   ) { }
 
 
-  @Get('products/:login/:sort')
-  async products(@Param('login') login: string, @Param('sort') sort: string): Promise<any[]> {
-    const data = await this.product.findAll(sort);
+  @Get('products/:sort')
+  async products(@Param('sort') sort: string, @Query('login') login?: string): Promise<any[]> {
+    const data = await this.product.findAll(sort, login);
     return data;
     // return data.map(elem => productsImg(elem, this.productImg));
   }
-  @Get('product/:login/:id')
-  async productsId(@Param('login') login: string, @Param('id') id: number): Promise<any> {
-    return await this.product.findOne(id)
-    // .then(async el => {
-    //   return await productsImg((el), this.productImg)
-    // });
+  @Get('product/:id')
+  async productsId(@Param('id') id: number, @Query('login') login?: string): Promise<any> {
+    return await this.product.findOne(id, login)
   }
 
 
