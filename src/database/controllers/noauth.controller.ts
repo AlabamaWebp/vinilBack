@@ -10,13 +10,16 @@ export class NoauthController {
     //   return this.user.findAll();
     // }
     @Post('createAccount')
-    async createAcc(@Body() user: User): Promise<any> //Promise<string | null> 
-    {
-        return this.user.create(user);
+    async createAcc(@Body() user: User): Promise<boolean> {//Promise<string | null> 
+        return this.user.create(user).then(el => !!el);
     }
     @Get('checkLogin/:login')
     async checkLogin(@Param('login') user: string): Promise<boolean> {
-        return this.user.find(user).then(el => !!el);
+        return this.user.find({ login: user }).then(el => !!el);
+    }
+    @Get('login/:login/:pass')
+    async login(@Param('login') login: string, @Param('pass') pass: string): Promise<boolean> {
+        return this.user.find({ login: login, password: pass }).then(el => !!el);
     }
 
 }

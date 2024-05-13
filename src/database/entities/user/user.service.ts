@@ -36,8 +36,8 @@ export class UserService {
     }))
     // return this.userRepository.save(user);
   }
-  async find(login: string): Promise<User> {
-    return await this.userRepository.findOneBy({ login: login })
+  async find(params: any): Promise<User> {
+    return await this.userRepository.findOneBy(params)
   }
   async findWithPassword(data: {login: string, password: string}): Promise<User> {
     return await this.userRepository.findOneBy(data)
