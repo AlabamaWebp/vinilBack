@@ -1,11 +1,6 @@
 import { Controller, Get, Post, Body, Param, Delete, Query } from '@nestjs/common';
-import { UserService } from '../entities/user/user.service';
-import { User } from '../entities/user/user.entity';
 import { ProductImgService, ProductService } from '../entities/product/product.service';
-import { ProductClassService } from '../entities/productClass/productClass.service';
 import { userProductService } from '../entities/order/userProduct.service';
-import { ProductClass } from '../entities/productClass/productClass.entity';
-import { Product } from '../entities/product/product.entity';
 
 @Controller('database')
 export class DatabaseController {
@@ -14,7 +9,7 @@ export class DatabaseController {
     private readonly product: ProductService,
     private readonly productImg: ProductImgService,
     // private readonly product_class: ProductClassService,
-    private readonly user_product: userProductService,
+    private readonly orders: userProductService,
   ) { }
 
 
@@ -32,17 +27,18 @@ export class DatabaseController {
 
   @Get('getOrderByStatus/:login/:status')
   async favorites(@Param('login') login: string, @Param('status') status: number): Promise<any> {
-    return await this.user_product.getByStatus(login, status);
+    return await this.orders.getByStatus(login, status);
   }
 
-  @Post('createOrderByStatus/') // 0 - favorite / 1 - bascet / 2 - order
-  async createByStatus(@Body('login') data: { login: string, status: number, id: number }): Promise<any> {
-    return await this.user_product.createByStatus(data.login, data.status, data.id);
+  @Post('createOrderByStatus') // 0 - favorite / 1 - bascet / 2 - order
+  async createByStatus(@Body() data: { login: string, status: number, id: number }): Promise<any> {
+    console.log(data);
+    return await this.orders.createByStatus(data.login, data.status, data.id);
   }
 
-  @Delete('deleteOrderByStatus/:id') // 0 - favorite / 1 - bascet / 2 - order
-  async deleteByStatus(@Param('id') id: number): Promise<any> {
-    return await this.user_product.deleteByStatus(id);
+  @Post('deleteOrderByStatus') // 0 - favorite / 1 - bascet / 2 - order
+  async deleteByStatus(@Body() data: { login: string, status: number, id: number }): Promise<any> {
+    return await this.orders.deleteByStatus(data.login, data.status, data.id);
   }
 }
 // async function productsImg(product: Product, service: ProductImgService): Promise<Product> {
