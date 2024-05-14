@@ -32,7 +32,6 @@ export class DatabaseController {
 
   @Post('createOrderByStatus') // 0 - favorite / 1 - bascet / 2 - order
   async createByStatus(@Body() data: { login: string, status: number, id: number }): Promise<any> {
-    console.log(data);
     return await this.orders.createByStatus(data.login, data.status, data.id);
   }
 

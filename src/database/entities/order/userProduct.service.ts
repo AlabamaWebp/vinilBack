@@ -14,10 +14,16 @@ export class userProductService {
     private readonly product: ProductService,
   ) { }
 
-  async getByStatus(login: string, status: number): Promise<UserProduct[]> { // 0 - favorite / 1 - bascet / 2 - order
+  async getByStatus(login: string, status: number): Promise<any[]> { // 0 - favorite / 1 - bascet / 2 - order
     const tmp = await this.user.find({ login: login });
     if (!tmp) throw new HttpException('Такого пользователя не существует.', HttpStatus.NOT_FOUND);
-    return this.orderRepository.find({ where: { user: tmp, status: status } });
+    let orders: any = await this.orderRepository.find({ where: { user: tmp, status: status } });
+
+    orders = orders.map(el => el.product.id)
+    const ret = await this.product.findAll("undefined", login)
+    console.log(orders);
+    
+    return ret.filter(el => orders.includes(el.id))
   }
 
   async createByStatus(login: string, status: number, id: number): Promise<any> { // 0 - favorite / 1 - bascet / 2 - order

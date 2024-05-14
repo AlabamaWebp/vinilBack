@@ -18,9 +18,13 @@ export class ProductService {
     private readonly userRepository: Repository<User>,
   ) { }
 
-  async findAll(sort: string, login?: string): Promise<(ProductNorm | Product)[]> {
-    const productClass = await this.productClassRepository.findOne({ where: { name: sort } });
-    const products = await this.productRepository.find({ where: { className: productClass }, relations: ['images', 'className'] });
+  async findAll(sort: string | 'undefined', login?: string): Promise<(ProductNorm | Product)[]> {
+    let params1 = { relations: ['images', 'className'] }
+    if (sort == "undefined") {
+      let productClass = await this.productClassRepository.findOne({ where: { name: sort } });
+      params1['where'] = { className: productClass }
+    }
+    const products = await this.productRepository.find(params1);
     if (login) {
       const userid = (await this.userRepository.findOne({ where: { login: login } }));
       const orders = (await this.orderRepository.find({ where: { user: userid }, relations: ['user', 'product'] }))
