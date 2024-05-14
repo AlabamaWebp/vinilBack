@@ -18,10 +18,36 @@ export class ProductService {
     private readonly userRepository: Repository<User>,
   ) { }
 
-  async findAll(sort: string, login?: string): Promise<Product[]> {
+  async findAll(sort: string, login?: string): Promise<(ProductNorm | Product)[]> {
     const productClass = await this.productClassRepository.findOne({ where: { name: sort } });
-    const params = login ? { className: productClass, login: login } : { className: productClass }
-    return this.productRepository.find({ where: params, relations: ['images', 'className'] });
+    const products = await this.productRepository.find({ where: { className: productClass }, relations: ['images', 'className'] });
+    if (login) {
+      const userid = (await this.userRepository.findOne({ where: { login: login } }));
+      const orders = (await this.orderRepository.find({ where: { user: userid }, relations: ['user', 'product'] }))
+      const itog: ProductNorm[] = []
+      products.forEach(product => {
+        let is_favorite = false;
+        let in_basket = false;
+        let in_order = false;
+        orders.filter(order => product.id == order.id)
+          .forEach(order => {
+            switch (order.status) {
+              case 0:
+                is_favorite = true;
+                break
+              case 1:
+                in_basket = true;
+                break
+              case 2:
+                in_order = true;
+                break
+            }
+          })
+        itog.push(new ProductNorm(product, is_favorite, in_basket, in_order))
+      })
+      return itog
+    }
+    return products
   }
   async findOne(id: number, login?: string): Promise<(ProductNorm | Product)> {
     const product: Product = await this.productRepository.findOne({ where: { id: id }, relations: ['images', 'className'] });
