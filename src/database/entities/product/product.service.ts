@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product, ProductClass, ProductImg } from './product.entity';
-import { UserProduct } from '../order/userProduct.entity';
+import { Product, ProductImg } from './product.entity';
+import { UserProduct } from '../userProduct/userProduct.entity';
 import { User } from '../user/user.entity';
+import { ProductClass } from '../productClass/productClass.entity';
 
 @Injectable()
 export class ProductService {
@@ -28,7 +29,7 @@ export class ProductService {
     if (login) {
       const userid = (await this.userRepository.findOne({ where: { login: login } }));
       const orders = (await this.orderRepository.find({ where: { user: userid }, relations: ['user', 'product'] }))
-      const itog: ProductNorm[] = []
+      const itog: ProductNorm[] = [];
       products.forEach(product => {
         let is_favorite = false;
         let in_basket = false;

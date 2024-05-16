@@ -21,7 +21,6 @@ export class Product extends BaseEntity {
   images: ProductImg[];
   
 }
-export { ProductClass };
 
 
 @Entity('ProductImg')
@@ -33,3 +32,4 @@ export class ProductImg extends BaseEntity {
   @Column()
   img: string;
 }
+
