@@ -38,7 +38,7 @@ export class DatabaseController {
     return await this.order.findAll(login);
   }
 
-  @Post('createOrder') // 0 - favorite / 1 - bascet / 2 - order
+  @Post('createOrder')
   async createOrder(@Body() data: { id: number[], login: string }): Promise<any> {
     return await this.order.createOrder(data);
   }
