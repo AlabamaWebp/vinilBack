@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, Put } from '@nestjs/common';
 import { ProductImgService, ProductService } from '../entities/product/product.service';
 import { userProductService } from '../entities/userProduct/userProduct.service';
 import { OrderService } from '../entities/order/order.service';
@@ -50,6 +50,10 @@ export class DatabaseController {
 
   @Post('deleteOrderByStatus') // 0 - favorite / 1 - bascet / 2 - order
   async deleteByStatus(@Body() data: { login: string, status: number, id: number }): Promise<any> {
+    return await this.userProduct.deleteByStatus(data.login, data.status, data.id);
+  }
+  @Put('editProfile') // 0 - favorite / 1 - bascet / 2 - order
+  async putUser(@Body() data: { login: string, status: number, id: number }): Promise<any> {
     return await this.userProduct.deleteByStatus(data.login, data.status, data.id);
   }
 }
