@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Param, Delete, Query, Put } from '@nestjs/
 import { ProductImgService, ProductService } from '../entities/product/product.service';
 import { userProductService } from '../entities/userProduct/userProduct.service';
 import { OrderService } from '../entities/order/order.service';
+import { UserService } from '../entities/user/user.service';
+import { User } from '../entities/user/user.entity';
 
 @Controller('database')
 export class DatabaseController {
@@ -12,7 +14,7 @@ export class DatabaseController {
     // private readonly product_class: ProductClassService,
     private readonly userProduct: userProductService,
     private readonly order: OrderService,
-    
+    private readonly user: UserService
   ) { }
 
 
@@ -52,10 +54,14 @@ export class DatabaseController {
   async deleteByStatus(@Body() data: { login: string, status: number, id: number }): Promise<any> {
     return await this.userProduct.deleteByStatus(data.login, data.status, data.id);
   }
-  @Put('editProfile') // 0 - favorite / 1 - bascet / 2 - order
-  async putUser(@Body() data: { login: string, status: number, id: number }): Promise<any> {
-    return await this.userProduct.deleteByStatus(data.login, data.status, data.id);
+  @Get('getUser/:login')
+  async checkLogin(@Param('login') user: string): Promise<User> {
+    return this.user.find({ login: user })
   }
+  // @Put('editProfile') // 0 - favorite / 1 - bascet / 2 - order
+  // async putUser(@Body() data: { login: string, status: number, id: number }): Promise<any> {
+  //   return await this.userProduct.deleteByStatus(data.login, data.status, data.id);
+  // }
 }
 // async function productsImg(product: Product, service: ProductImgService): Promise<Product> {
 //   const tmp = await service.findAll(product).then(el => {
