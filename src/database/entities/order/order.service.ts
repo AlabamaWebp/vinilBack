@@ -23,9 +23,11 @@ export class OrderService {
     const user = await this.getLogin(login);
     let orders: Product[][] | Order[] = await this.orderRepository.find({ where: { user: user }, relations: ['product', 'product.product'] })
     orders = orders.map(el => {
-      return el.product.map(e => {
+      //@ts-ignore
+      el.product = el.product.map(e => {
         return e.product;
       })
+      return el
     })
     return orders;
   }
