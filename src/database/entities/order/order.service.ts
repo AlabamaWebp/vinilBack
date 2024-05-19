@@ -21,10 +21,12 @@ export class OrderService {
 
   async findAll(login?: string): Promise<any> {
     const user = await this.getLogin(login);
-    let orders: Product[][] | Order[] = await this.orderRepository.find({ where: { user: user }, relations: ['product', 'product.product'] })
+    let orders: Product[][] | Order[] = await this.orderRepository.find({ where: { user: user }, relations: ['product', 'product.product', 'product.product.images'] })
     orders = orders.map(el => {
       //@ts-ignore
       el.product = el.product.map(e => {
+        //@ts-ignore
+        e.product.img = e.product.images[0].img
         return e.product;
       })
       return el

@@ -21,10 +21,11 @@ export class ProductService {
 
   async findAll(sort: string | 'undefined', login?: string): Promise<(ProductNorm | Product)[]> {
     let params1 = { relations: ['images', 'className'] }
-    if (sort == "undefined") {
+    if (sort != "undefined") {
       let productClass = await this.productClassRepository.findOne({ where: { name: sort } });
       params1['where'] = { className: productClass }
     }
+    console.log(sort);
     const products = await this.productRepository.find(params1);
     if (login) {
       const userid = (await this.userRepository.findOne({ where: { login: login } }));
