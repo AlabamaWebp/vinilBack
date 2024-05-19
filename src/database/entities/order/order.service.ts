@@ -21,18 +21,24 @@ export class OrderService {
 
   async findAll(login?: string): Promise<any> {
     const user = await this.getLogin(login);
-    return await this.orderRepository.find({where: { user: user }})
+    let orders: Product[][] | Order[] = await this.orderRepository.find({ where: { user: user }, relations: ['product', 'product.product'] })
+    orders = orders.map(el => {
+      return el.product.map(e => {
+        return e.product;
+      })
+    })
+    return orders;
   }
   // async findOne(id: number, login?: string): Promise<any> {
   //   return
   // }
   async createOrder(data: { id: number[], login: string }): Promise<Order> { //Promise<User> 
     const user = await this.getLogin(data.login);
-    const order: any = this.orderRepository.save({ user: user });
+    const order: any = await this.orderRepository.save({ user: user });
     data.id.forEach(async el => {
-      const tmp = await this.productRepository.findOne({ where: { id: el }})
+      const tmp = await this.productRepository.findOne({ where: { id: el } })
       await this.orderProductRepository.save({ product: tmp, order: order })
-      return 
+      return
     })
     return order
   }

@@ -10,7 +10,7 @@ export class Order extends BaseEntity {
   id: number;
   @ManyToOne(() => User)
   user: User;
-  @OneToMany(() => OrderProduct, e => e, { cascade: true })
+  @OneToMany(() => OrderProduct, e => e.order, { cascade: true })
   product: OrderProduct[];
 }
 
