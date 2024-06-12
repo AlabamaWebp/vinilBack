@@ -13,11 +13,11 @@ import { NoauthController } from './controllers/noauth.controller';
 import { DBMiddleware } from './database.middleware';
 import { ProductClass } from './entities/productClass/productClass.entity';
 
-import * as dotenv from 'dotenv';
 import { OrderService } from './entities/order/order.service';
 import { Order, OrderProduct } from './entities/order/order.entity';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { getMailConfig } from 'src/mailer/mail.config';
+import * as dotenv from 'dotenv';
 dotenv.config();
 const env = process.env.create_table === '1';
 

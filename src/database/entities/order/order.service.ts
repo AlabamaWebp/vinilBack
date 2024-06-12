@@ -7,6 +7,8 @@ import { User } from '../user/user.entity';
 import { Product } from '../product/product.entity';
 import { MailerService } from '@nestjs-modules/mailer';
 import { join } from 'path';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class OrderService {
@@ -39,17 +41,29 @@ export class OrderService {
   // async findOne(id: number, login?: string): Promise<any> {
   //   return
   // }
-  async createOrder(data: { id: number[], login: string, mail: string }): Promise<Order> { //Promise<User> 
-    console.log(data.mail);
-    this.sendConfirmMail(data.mail);
+  async createOrder(data: { id: number[], login: string, mail: string, addres: string, tel: string, sposob: string }): Promise<Order> { //Promise<User>
     if (data.id.length) {
       const user = await this.getLogin(data.login);
       const order: any = await this.orderRepository.save({ user: user });
-      data.id.forEach(async el => {
+      let tovar: string[] = []
+      let price = 0
+      for (let el of data.id) {
         const tmp = await this.productRepository.findOne({ where: { id: el } })
+        tovar.push(tmp.name);
+        price += tmp.price;
         await this.orderProductRepository.save({ product: tmp, order: order })
-        return
-      })
+      }
+      console.log(1);
+      const tmp = {
+        email: data.mail,
+        fio: user.fio,
+        tel: data.tel,
+        tovar: tovar.toString(),
+        addres: data.addres,
+        sposob: data.sposob,
+        price: price + ' рублей'
+      }
+      this.sendConfirmMail(tmp);
       return order
     }
   }
@@ -58,17 +72,22 @@ export class OrderService {
     return (await this.userRepository.findOne({ where: { login: login } }));
   }
 
-  async sendConfirmMail(email: string) {
+  async sendConfirmMail(data: mailer) {
     // Отправка почты
     return await this.mailerService
       .sendMail({
-        to: email,
-        subject: 'Testing Nest MailerModule ✔',
-        template: join(__dirname, '../../../mailer', 'confirmReg')
-        // context: {
-        //   username: user.name,
-        //   urlConfirmAddress,
-        // },
+        to: process.env.login,
+        subject: 'Оформлен заказ',
+        template: join(__dirname, '../../../mailer', 'confirmReg'),
+        context: {
+          email: data.email,
+          fio: data.fio,
+          tel: data.tel,
+          tovar: data.tovar,
+          addres: data.addres,
+          sposob: data.sposob,
+          price: data.price
+        },
       })
       .catch((e) => {
         throw new HttpException(
@@ -80,6 +99,10 @@ export class OrderService {
 }
 interface mailer {
   email: string,
-  name: string,
-
+  fio: string,
+  tel: string,
+  tovar: string,
+  addres: string,
+  sposob: string,
+  price: string
 }
