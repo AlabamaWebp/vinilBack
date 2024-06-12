@@ -16,6 +16,8 @@ import { ProductClass } from './entities/productClass/productClass.entity';
 import * as dotenv from 'dotenv';
 import { OrderService } from './entities/order/order.service';
 import { Order, OrderProduct } from './entities/order/order.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { getMailConfig } from 'src/mailer/mail.config';
 dotenv.config();
 const env = process.env.create_table === '1';
 
@@ -32,6 +34,9 @@ const env = process.env.create_table === '1';
     ),
     TypeOrmModule.forFeature([User, ProductClass, Product, UserProduct, ProductImg, Order, OrderProduct]),
     DatabaseModule,
+    MailerModule.forRootAsync({
+      useFactory: getMailConfig,
+    }),
   ],
   controllers: [DatabaseController, NoauthController],
   providers: [UserService, ProductClassService, ProductService, userProductService, DatabaseService, ProductImgService, OrderService]

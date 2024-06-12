@@ -41,7 +41,7 @@ export class DatabaseController {
   }
 
   @Post('createOrder')
-  async createOrder(@Body() data: { id: number[], login: string }): Promise<any> {
+  async createOrder(@Body() data: { id: number[], login: string, mail: string }): Promise<any> {
     return await this.order.createOrder(data);
   }
 
