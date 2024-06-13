@@ -22,13 +22,10 @@ export class userProductService {
 
     orders = orders.map(el => el.product.id)
     const ret = await this.product.findAll("undefined", login)
-    console.log(orders);
-    
     return ret.filter(el => orders.includes(el.id))
   }
 
   async createByStatus(login: string, status: number, id: number): Promise<any> { // 0 - favorite / 1 - bascet / 2 - order
-    console.log("save");
     const user1 = await this.user.find({ login: login });
     const product1 = await this.product.findOne(id);
     // if (!user1) throw new HttpException('Такого пользователя не существует.', HttpStatus.NOT_FOUND);

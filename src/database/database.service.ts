@@ -14,7 +14,6 @@ export class DatabaseService {
       recreate = process.env.create_table === '1'; // process.env.create_table === '1'
       async onModuleInit() {
             console.log(process.env.create_table);
-
             if (this.recreate) {
                   await this.createUser();
                   await this.createClassProducts();
