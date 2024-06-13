@@ -43,8 +43,8 @@ export class OrderService {
   // async findOne(id: number, login?: string): Promise<any> {
   //   return
   // }
-  async createOrder(data: { id: number[], login: string, mail: string, addres: string, tel: string, sposob: string }): Promise<Order> { //Promise<User>
-    
+  async createOrder(data: { id: number[], login: string, mail: string, addres: string, tel: string, sposob: string, del: boolean }): Promise<Order> { //Promise<User>
+
     if (data.id.length) {
       const user = await this.getLogin(data.login);
       const order: any = await this.orderRepository.save({ user: user });
@@ -66,7 +66,8 @@ export class OrderService {
         price: price + ' рублей'
       }
       this.sendConfirmMail(tmp);
-      this.userProductS.deleteAllByStatus(user, 1)
+      if (data.del)
+        this.userProductS.deleteAllByStatus(user, 1)
       return order
     }
   }
