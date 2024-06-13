@@ -8,6 +8,7 @@ import { Product } from '../product/product.entity';
 import { MailerService } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import * as dotenv from 'dotenv';
+import { userProductService } from '../userProduct/userProduct.service';
 dotenv.config();
 
 @Injectable()
@@ -22,6 +23,7 @@ export class OrderService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     private readonly mailerService: MailerService,
+    private readonly userProductS: userProductService,
   ) { }
 
   async findAll(login?: string): Promise<any> {
@@ -42,6 +44,7 @@ export class OrderService {
   //   return
   // }
   async createOrder(data: { id: number[], login: string, mail: string, addres: string, tel: string, sposob: string }): Promise<Order> { //Promise<User>
+    
     if (data.id.length) {
       const user = await this.getLogin(data.login);
       const order: any = await this.orderRepository.save({ user: user });
@@ -53,7 +56,6 @@ export class OrderService {
         price += tmp.price;
         await this.orderProductRepository.save({ product: tmp, order: order })
       }
-      console.log(1);
       const tmp = {
         email: data.mail,
         fio: user.fio,
@@ -64,6 +66,7 @@ export class OrderService {
         price: price + ' рублей'
       }
       this.sendConfirmMail(tmp);
+      this.userProductS.deleteAllByStatus(user, 1)
       return order
     }
   }
@@ -73,6 +76,7 @@ export class OrderService {
   }
 
   async sendConfirmMail(data: mailer) {
+    console.log(process.env.login, !!process.env.password);
     // Отправка почты
     return await this.mailerService
       .sendMail({

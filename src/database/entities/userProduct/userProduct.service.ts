@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { UserProduct } from './userProduct.entity';
 import { ProductService } from '../product/product.service';
 import { UserService } from '../user/user.service';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class userProductService {
@@ -53,6 +54,19 @@ export class userProductService {
     })
     return await this.orderRepository.remove(orders);
 
+    // const tmp = await this.orderRepository.findBy({ id: id })
+    // if (!tmp) throw new HttpException('Такогой записи не существует.', HttpStatus.NOT_FOUND);
+    // return !!(await this.orderRepository.remove(tmp));
+  }
+  async deleteAllByStatus(user1: User, status: number): Promise<any> { // 0 - favorite / 1 - bascet / 2 - order
+    if (!user1) throw new HttpException('Такого пользователя не существует.', HttpStatus.NOT_FOUND);
+    const orders = await this.orderRepository.find({
+      where: {
+        user: user1,
+        status: status
+      }
+    })
+    return await this.orderRepository.remove(orders);
     // const tmp = await this.orderRepository.findBy({ id: id })
     // if (!tmp) throw new HttpException('Такогой записи не существует.', HttpStatus.NOT_FOUND);
     // return !!(await this.orderRepository.remove(tmp));
